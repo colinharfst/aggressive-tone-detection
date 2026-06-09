@@ -11,7 +11,7 @@ SAMPLE_RATE = 16000
 CHANNELS = 1
 SAMPLE_WIDTH = 2   # 16-bit audio
 
-RECORD_SECONDS = 10
+RECORD_SECONDS = 6
 
 ser = serial.Serial(PORT, BAUD)
 
