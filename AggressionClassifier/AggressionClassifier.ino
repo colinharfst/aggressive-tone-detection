@@ -1,22 +1,7 @@
 /*
- * AggressionClassifier.ino  — v2 (Feature-Parity Edition)
+ * AggressionClassifier.ino
  * Arduino Nano 33 BLE Sense Rev2
  * Compatible with Arduino_TensorFlowLite 2.4.0-ALPHA
- *
- * ── FEATURE-PARITY FIX ───────────────────────────────────────────────────────
- *   Prior bug: librosa defaulted to Slaney norm + non-HTK scale, producing
- *   different mel filter weights than this sketch. On-device predictions were
- *   based on features the model had never seen during training.
- *
- *   This sketch implements the EXACT feature pipeline as the unified notebook:
- *     • HTK scale   : mel = 2595 * log10(1 + hz/700)  ← hz_to_mel() below
- *     • Plain triangular filters (NOT area-normalised)  ← init_mel_filterbank()
- *     • power_to_db ref=global_max, eps=1e-10, floor=-80 dB
- *     • Per-clip z-score normalisation
- *
- *   Training notebook (aggression_classifier_unified.ipynb) forces:
- *     librosa.feature.melspectrogram(..., htk=True, norm=None)
- *   which exactly matches this sketch's mel filterbank arithmetic.
  *
  * ── PIPELINE ─────────────────────────────────────────────────────────────────
  *   PDM mic (16 kHz, mono)
@@ -66,7 +51,7 @@
 #include <math.h>
 
 // =============================================================================
-//  CONFIGURATION  — must match aggression_classifier_unified.ipynb exactly
+//  CONFIGURATION
 // =============================================================================
 
 static constexpr int   SAMPLE_RATE        = 16000;
@@ -84,7 +69,7 @@ static constexpr int   VOTE_WINDOW        = 2;       // frames to average
 static constexpr int   STRIDE_SAMPLES     = 4000;    // 250 ms inference stride
 
 // Arena — increase in steps of 8192 if AllocateTensors() fails.
-// The notebook prints the recommended value after quantisation.
+// The notebook prints the recommended value after quantization.
 static constexpr int   TFLITE_ARENA_SIZE  = 65536;   // 80 KB default (notebook requested 147456)
 
 static constexpr int   ALERT_PIN          = LED_BUILTIN;
